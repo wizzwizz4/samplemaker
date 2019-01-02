@@ -14,7 +14,7 @@ def sample(f, frequency=440, duration=1, volume=0.8,
            bytes_per_sample=2, sample_rate=44100):
     effective_frequency = frequency / sample_rate
     sample_count = duration * sample_rate
-    vf = volume * 256 ** bytes_per_sample
+    vf = volume * 2 ** (8 * bytes_per_sample - 1)
     data = [int(vf * f(effective_frequency * i))
             for i in range(sample_count)]
     return b"".join(i.to_bytes(bytes_per_sample, "little", signed=True)
@@ -26,7 +26,7 @@ def play_from_buffer(buffer, bytes_per_sample=2, sample_rate=44100):
                            bytes_per_sample=bytes_per_sample,
                            sample_rate=sample_rate).play()
 
-def play(f, frequency=440, duration=1, volume=0.5,
+def play(f, frequency=440, duration=1, volume=0.8,
          bytes_per_sample=2, sample_rate=44100):
     buffer = sample(f, frequency, duration, volume,
                     bytes_per_sample, sample_rate)
@@ -39,7 +39,7 @@ def save_from_buffer(file, buffer, bytes_per_sample=2, sample_rate=44100):
         f.setframerate(sample_rate)
         f.writeframes(buffer)
 
-def save(file, f, frequency=440, duration=1, volume=0.5,
+def save(file, f, frequency=440, duration=1, volume=0.8,
          bytes_per_sample=2, sample_rate=44100):
     buffer = sample(f, frequency, duration, volume,
                     bytes_per_sample, sample_rate)
